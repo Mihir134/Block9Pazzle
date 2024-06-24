@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Puzzle</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        .background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff0000, #ff007f, #7f00ff, #00ffff, #00ff7f);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .puzzle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 50px;
+            margin-bottom: 20px;
+        }
+
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            border: 2px solid #333;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .solved-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .solved-image-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            border: 2px solid #333;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .puzzle-piece,
+        .solved-piece {
+            width: 100px;
+            height: 100px;
+        }
+
+        .puzzle-piece {
+            cursor: pointer;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="puzzle-wrapper">
+        <div class="puzzle-container" id="puzzleContainer"></div>
+        <div class="solved-container">
+            <h2>Solved Puzzle</h2>
+            <div class="solved-image-container">
+                <img src="imgs/piece1.png" alt="piece1" class="solved-piece">
+                <img src="imgs/piece2.png" alt="piece2" class="solved-piece">
+                <img src="imgs/piece3.png" alt="piece3" class="solved-piece">
+                <img src="imgs/piece4.png" alt="piece4" class="solved-piece">
+                <img src="imgs/piece5.png" alt="piece5" class="solved-piece">
+                <img src="imgs/piece6.png" alt="piece6" class="solved-piece">
+                <img src="imgs/piece7.png" alt="piece7" class="solved-piece">
+                <img src="imgs/piece8.png" alt="piece8" class="solved-piece">
+                <img src="imgs/piece9.png" alt="piece9" class="solved-piece">
+            </div>
+        </div>
+    </div>
+    <button onclick="checkPuzzle()">Check Puzzle</button>
+
+    <script>
+        const piecePaths = [
+            "imgs/piece1.png",
+            "imgs/piece2.png",
+            "imgs/piece3.png",
+            "imgs/piece4.png",
+            "imgs/piece5.png",
+            "imgs/piece6.png",
+            "imgs/piece7.png",
+            "imgs/piece8.png",
+            "imgs/piece9.png"
+        ];
+
+        // Shuffle the paths
+        let shuffledPaths = piecePaths.slice().sort(() => Math.random() - 0.5);
+
+        // Reference to the puzzle container
+        const puzzleContainer = document.getElementById('puzzleContainer');
+
+        // Function to create puzzle pieces
+        function createPuzzlePieces(paths) {
+            puzzleContainer.innerHTML = '';
+            paths.forEach(path => {
+                const img = document.createElement('img');
+                img.src = path;
+                img.classList.add('puzzle-piece');
+                img.draggable = true;
+                img.ondragstart = dragStart;
+                img.ondrop = drop;
+                img.ondragover = allowDrop;
+                puzzleContainer.appendChild(img);
+            });
+        }
+
+        // Initialize puzzle pieces
+        createPuzzlePieces(shuffledPaths);
+
+        // Drag and drop functions
+        let draggedElement = null;
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function dragStart(event) {
+            draggedElement = event.target;
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            if (event.target.classList.contains('puzzle-piece')) {
+                const targetElement = event.target;
+                const draggedSrc = draggedElement.src;
+                draggedElement.src = targetElement.src;
+                targetElement.src = draggedSrc;
+            }
+        }
+
+        // Function to check if the puzzle is solved
+        function checkPuzzle() {
+            const currentOrder = Array.from(document.querySelectorAll('.puzzle-piece')).map(piece => piece.src);
+            const expectedOrder = piecePaths.map(path => new URL(path, window.location.origin).href);
+
+            console.log("Current Order:", currentOrder);
+            console.log("Expected Order:", expectedOrder);
+
+            if (JSON.stringify(currentOrder) === JSON.stringify(expectedOrder)) {
+                window.location.href = 'img9(3).html';
+            } else {
+                alert('The puzzle is not solved yet. Try again!');
+            }
+        }
+    </script>
+</body>
+
+</html>
